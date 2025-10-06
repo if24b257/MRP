@@ -1,17 +1,34 @@
 package org.SalimMRP.application;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import com.sun.net.httpserver.HttpServer;
+import org.SalimMRP.presentation.UserController;
+import org.SalimMRP.presentation.MediaController;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        try {
+            int port = 8080;
+            HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+            System.out.println("Starting Media Ratings Platform server on port " + port + "...");
+
+            // Controller registrieren (Routes)
+            UserController.registerRoutes(server);
+            MediaController.registerRoutes(server);
+
+            // Server starten
+            server.setExecutor(null); // Default-Executor
+            server.start();
+
+            System.out.println("Server started successfully at http://localhost:" + port);
+            System.out.println("Press CTRL + C to stop the server.");
+
+        } catch (IOException e) {
+            System.err.println("Error starting HTTP server: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
