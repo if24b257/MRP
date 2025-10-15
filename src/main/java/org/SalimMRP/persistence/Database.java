@@ -3,34 +3,35 @@ package org.SalimMRP.persistence;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
-public class Database {
+public class Database implements ConnectionProvider {
 
-    //Konfigurationsparameter – passen zu deinem docker-compose Setup
-    private static final String URL = "jdbc:postgresql://localhost:5433/mrp_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    private final String url;
+    private final String user;
+    private final String password;
 
-    //Statische Initialisierung – optional, um sicherzugehen, dass der Treiber geladen ist
-    static {
+    public Database(String url, String user, String password) {
+        this.url = Objects.requireNonNull(url, "url must not be null");
+        this.user = Objects.requireNonNull(user, "user must not be null");
+        this.password = Objects.requireNonNull(password, "password must not be null");
+        loadDriver();
+    }
+
+    private void loadDriver() {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            System.err.println("PostgreSQL JDBC Driver not found. Include it in your classpath!");
+            throw new IllegalStateException("PostgreSQL JDBC Driver not found. Include it in your classpath!", e);
         }
     }
 
-    //Methode für neue DB-Verbindungen
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+    @Override
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
     }
 
-    //Optional: Methode zum Testen
-    public static void testConnection() {
-        try (Connection conn = getConnection()) {
-            System.out.println("✅ Database connection established successfully!");
-        } catch (SQLException e) {
-            System.err.println("❌ Failed to connect to the database: " + e.getMessage());
-        }
+    public static Database fromDefaults() {
+        return new Database("jdbc:postgresql://localhost:5433/mrp_db", "postgres", "postgres");
     }
 }

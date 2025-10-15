@@ -1,31 +1,18 @@
 package org.SalimMRP.business;
 
-import org.SalimMRP.persistence.MediaRepository;
 import org.SalimMRP.persistence.models.Media;
+
 import java.util.List;
 
-public class MediaService {
+public interface MediaService {
 
-    private final MediaRepository repo = new MediaRepository();
+    boolean createMedia(Media media);
 
-    public boolean createMedia(Media media) {
-        if (media.getTitle() == null || media.getMediaType() == null) return false;
-        return repo.save(media);
-    }
+    List<Media> getAllMedia();
 
-    public List<Media> getAllMedia() {
-        return repo.findAll();
-    }
+    Media getMediaById(int id);
 
-    public Media getMediaById(int id) {
-        return repo.findById(id);
-    }
+    boolean updateMedia(Media media);
 
-    public boolean updateMedia(Media media) {
-        return repo.update(media);
-    }
-
-    public boolean deleteMedia(int id) {
-        return repo.delete(id);
-    }
+    boolean deleteMedia(int id);
 }

@@ -4,50 +4,56 @@ public class Media {
     private int id;
     private String title;
     private String description;
-    private String mediaType; // movie, series, game
-    private int releaseYear;
-    private String genre;
-    private int ageRestriction;
-    private double averageScore;
+    private String mediaType;
     private int createdByUserId;
 
-    public Media() {}
+    public Media() {
+    }
 
-    public Media(String title, String description, String mediaType, int releaseYear, String genre, int ageRestriction, int createdByUserId) {
+    public Media(String title, String description, String mediaType, int createdByUserId) {
         this.title = title;
         this.description = description;
         this.mediaType = mediaType;
-        this.releaseYear = releaseYear;
-        this.genre = genre;
-        this.ageRestriction = ageRestriction;
         this.createdByUserId = createdByUserId;
     }
 
-    //Getter und Setter
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getMediaType() { return mediaType; }
-    public void setMediaType(String mediaType) { this.mediaType = mediaType; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public int getReleaseYear() { return releaseYear; }
-    public void setReleaseYear(int releaseYear) { this.releaseYear = releaseYear; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public int getAgeRestriction() { return ageRestriction; }
-    public void setAgeRestriction(int ageRestriction) { this.ageRestriction = ageRestriction; }
+    public String getMediaType() {
+        return mediaType;
+    }
 
-    public double getAverageScore() { return averageScore; }
-    public void setAverageScore(double averageScore) { this.averageScore = averageScore; }
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
 
-    public int getCreatedByUserId() { return createdByUserId; }
-    public void setCreatedByUserId(int createdByUserId) { this.createdByUserId = createdByUserId; }
+    public int getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(int createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
 }

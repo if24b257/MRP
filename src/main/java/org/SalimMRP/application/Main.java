@@ -1,8 +1,23 @@
 package org.SalimMRP.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
-import org.SalimMRP.presentation.UserController;
+import org.SalimMRP.business.DefaultMediaService;
+import org.SalimMRP.business.DefaultUserService;
+import org.SalimMRP.business.MediaService;
+import org.SalimMRP.business.UserService;
+import org.SalimMRP.business.auth.InMemoryTokenService;
+import org.SalimMRP.business.auth.PasswordHasher;
+import org.SalimMRP.business.auth.Sha256PasswordHasher;
+import org.SalimMRP.business.auth.TokenService;
+import org.SalimMRP.persistence.ConnectionProvider;
+import org.SalimMRP.persistence.Database;
+import org.SalimMRP.persistence.JdbcMediaRepository;
+import org.SalimMRP.persistence.JdbcUserRepository;
+import org.SalimMRP.persistence.MediaRepository;
+import org.SalimMRP.persistence.UserRepository;
 import org.SalimMRP.presentation.MediaController;
+import org.SalimMRP.presentation.UserController;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,11 +30,25 @@ public class Main {
 
             System.out.println("Starting Media Ratings Platform server on port " + port + "...");
 
-            // Controller registrieren (Routes)
-            UserController.registerRoutes(server);
-            MediaController.registerRoutes(server);
+            ConnectionProvider connectionProvider = Database.fromDefaults();
+            UserRepository userRepository = new JdbcUserRepository(connectionProvider);
+            MediaRepository mediaRepository = new JdbcMediaRepository(connectionProvider);
 
-            // Server starten
+            PasswordHasher passwordHasher = new Sha256PasswordHasher();
+            TokenService tokenService = new InMemoryTokenService();
+
+            UserService userService = new DefaultUserService(userRepository, passwordHasher, tokenService);
+            MediaService mediaService = new DefaultMediaService(mediaRepository);
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            UserController userController = new UserController(userService, mapper);
+            userController.registerRoutes(server);
+
+            MediaController mediaController = new MediaController(mediaService, userService, mapper);
+            mediaController.registerRoutes(server);
+
+            //Server starten
             server.setExecutor(null); // Default-Executor
             server.start();
 
