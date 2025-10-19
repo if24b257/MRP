@@ -5,12 +5,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Objects;
 
+// Konkreter ConnectionProvider, der eine PostgreSQL-Verbindung per JDBC aufbaut.
 public class Database implements ConnectionProvider {
 
     private final String url;
     private final String user;
     private final String password;
 
+    // Speichert die Verbindungsparameter und lädt einmalig den Treiber.
     public Database(String url, String user, String password) {
         this.url = Objects.requireNonNull(url, "url must not be null");
         this.user = Objects.requireNonNull(user, "user must not be null");
@@ -18,6 +20,7 @@ public class Database implements ConnectionProvider {
         loadDriver();
     }
 
+    // Lädt den JDBC-Treiber, damit DriverManager später Verbindungen erzeugen kann.
     private void loadDriver() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -31,6 +34,7 @@ public class Database implements ConnectionProvider {
         return DriverManager.getConnection(url, user, password);
     }
 
+    // Fabrikmethode mit Default-Parametern für die lokale Entwicklungsumgebung.
     public static Database fromDefaults() {
         return new Database("jdbc:postgresql://localhost:5433/mrp_db", "postgres", "postgres");
     }

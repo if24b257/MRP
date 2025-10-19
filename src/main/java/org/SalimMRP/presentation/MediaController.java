@@ -7,6 +7,7 @@ import org.SalimMRP.business.UserService;
 
 import java.util.Objects;
 
+// Einstiegspunkt für alle Media-Endpunkte mit Referenzen auf Services und JSON-Mapper.
 public class MediaController {
 
     private final ObjectMapper mapper;

@@ -1,5 +1,6 @@
 package org.SalimMRP.persistence.models;
 
+// Einfaches Datenobjekt für Benutzer, geeignet für JSON-Mapping und JDBC-Speicherung.
 public class User {
     private int id;
     private String username;

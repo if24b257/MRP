@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// Bearbeitet Login-Anfragen, prüft die Methode, liest den JSON-Body und liefert bei Erfolg ein Token.
 class LoginHandler implements HttpHandler {
     private final UserController userController;
 
@@ -21,6 +22,7 @@ class LoginHandler implements HttpHandler {
             return;
         }
 
+        // Username und Passwort werden aus dem JSON-Body gelesen.
         LoginRequest request = userController.getMapper().readValue(exchange.getRequestBody(), LoginRequest.class);
         if (request.username == null || request.password == null) {
             userController.sendResponse(exchange, 400, "Provide username and password.");
@@ -38,6 +40,7 @@ class LoginHandler implements HttpHandler {
         }
     }
 
+    // Minimale Klasse für das Einlesen der JSON-Daten.
     private static class LoginRequest {
         public String username;
         public String password;

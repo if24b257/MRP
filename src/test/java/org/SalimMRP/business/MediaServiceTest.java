@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Verifiziert die Validierungs- und Delegationslogik des DefaultMediaService.
 class MediaServiceTest {
 
     private InMemoryMediaRepository mediaRepository;
@@ -122,6 +123,7 @@ class MediaServiceTest {
         return media;
     }
 
+    // Test-Repository, das Daten nur in einer Map hält.
     private static class InMemoryMediaRepository implements MediaRepository {
         private final Map<Integer, Media> storage = new HashMap<>();
         private int nextId = 1;

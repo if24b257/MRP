@@ -10,14 +10,13 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+// Registriert die Benutzer-Endpunkte und stellt Hilfsfunktionen für Antworten bereit.
 public class UserController {
-    //nimmt HTTP Anfragen entgegen
-    //ruft Businesslogik im Userservice auf
-    //gibt passende JSON responses & HTTP codes zurück
 
     private final ObjectMapper mapper;
     private final UserService userService;
 
+    // Service und JSON-Mapper werden über den Konstruktor injiziert.
     public UserController(UserService userService, ObjectMapper mapper) {
         this.userService = Objects.requireNonNull(userService, "userService must not be null");
         this.mapper = Objects.requireNonNull(mapper, "mapper must not be null");
@@ -36,7 +35,7 @@ public class UserController {
         server.createContext("/api/users/login", new LoginHandler(this));
     }
 
-    //Hilfsfunktionen
+    // Sendet eine Text-Antwort mit dem gewünschten Statuscode.
     public void sendResponse(HttpExchange exchange, int statusCode, String message) throws IOException {
         exchange.sendResponseHeaders(statusCode, message.getBytes(StandardCharsets.UTF_8).length);
         try (OutputStream os = exchange.getResponseBody()) {
@@ -44,6 +43,7 @@ public class UserController {
         }
     }
 
+    // Serialisiert ein Objekt nach JSON und setzt den passenden Content-Type.
     public void sendJsonResponse(HttpExchange exchange, int statusCode, Object response) throws IOException {
         String json = mapper.writeValueAsString(response);
         exchange.getResponseHeaders().add("Content-Type", "application/json");

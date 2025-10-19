@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Testet das Verhalten des DefaultUserService ohne echte Datenbank per In-Memory-Repository.
 class UserServiceTest {
 
     private InMemoryUserRepository userRepository;
@@ -110,6 +111,7 @@ class UserServiceTest {
         assertEquals(stored.getUsername(), found.getUsername());
     }
 
+    // Minimalistische In-Memory-Implementierung des UserRepository für die Tests.
     private static class InMemoryUserRepository implements UserRepository {
         private final Map<String, User> storage = new HashMap<>();
         private int nextId = 1;

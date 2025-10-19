@@ -2,6 +2,7 @@ package org.SalimMRP.business;
 
 import org.SalimMRP.persistence.models.User;
 
+// Schnittstelle für Benutzer-Funktionen, damit Controller unabhängig von der Implementierung bleiben.
 public interface UserService {
 
     boolean register(User user);

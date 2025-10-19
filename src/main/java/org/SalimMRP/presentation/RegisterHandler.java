@@ -6,7 +6,7 @@ import org.SalimMRP.persistence.models.User;
 
 import java.io.IOException;
 
-//Handler für Registrierung
+// Verarbeitet POST-Anfragen zur Benutzerregistrierung und übergibt das User-Objekt an den Service.
 class RegisterHandler implements HttpHandler {
     private final UserController userController;
 
@@ -21,6 +21,7 @@ class RegisterHandler implements HttpHandler {
             return;
         }
 
+        // Der Body wird als JSON gelesen und direkt in ein User-Objekt gemappt.
         User user = userController.getMapper().readValue(exchange.getRequestBody(), User.class);
         boolean success = userController.getUserService().register(user);
 

@@ -7,10 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// JDBC-gestützte Umsetzung des UserRepository. Führt SQL aus, um Benutzer anzulegen und zu lesen.
 public class JdbcUserRepository implements UserRepository {
 
     private final ConnectionProvider connectionProvider;
 
+    // Verbindungen werden über den injizierten ConnectionProvider bezogen.
     public JdbcUserRepository(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
@@ -18,6 +20,8 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public boolean save(User user) {
         String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
+
+        // try-with-resources sorgt dafür, dass Connection und Statement automatisch geschlossen werden.
         try (Connection conn = connectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

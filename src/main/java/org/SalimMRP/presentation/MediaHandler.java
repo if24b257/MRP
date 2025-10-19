@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+// Zentrale Handler-Klasse für alle /api/media-Anfragen mit Authentifizierung und Routing.
 class MediaHandler implements HttpHandler {
     private final MediaController mediaController;
 
@@ -28,6 +29,7 @@ class MediaHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
         String[] parts = path.split("/");
 
+        // Die Entscheidung, welche Logik greift, basiert auf HTTP-Methode und Pfadlänge.
         switch (method) {
             case "GET" -> handleGet(exchange, parts);
             case "POST" -> handlePost(exchange, user);
@@ -44,6 +46,7 @@ class MediaHandler implements HttpHandler {
             return;
         }
 
+        // Zugriff auf eine einzelne Ressource /api/media/{id}
         if (parts.length == 4) {
             Integer id = parseId(parts[3]);
             if (id == null) {
@@ -66,6 +69,7 @@ class MediaHandler implements HttpHandler {
         Media media = mediaController.getMapper().readValue(exchange.getRequestBody(), Media.class);
         media.setCreatedByUserId(user.getId());
 
+        // Bei gültigen Daten gibt der Service true zurück, sonst 400.
         if (mediaController.getMediaService().createMedia(media)) {
             sendResponse(exchange, 201, "Media created");
             return;
@@ -91,6 +95,7 @@ class MediaHandler implements HttpHandler {
             return;
         }
 
+        // Die Informationen des ursprünglichen Eintrags bleiben bestehen.
         media.setCreatedByUserId(existing.getCreatedByUserId());
 
         if (mediaController.getMediaService().updateMedia(media)) {
@@ -137,6 +142,7 @@ class MediaHandler implements HttpHandler {
             return null;
         }
 
+        // Token wird validiert und anschließend dem Benutzer zugeordnet.
         String token = authHeader.substring("Bearer ".length()).trim();
         if (!mediaController.getUserService().isTokenValid(token)) {
             sendResponse(exchange, 401, "Invalid or expired token");
@@ -169,6 +175,7 @@ class MediaHandler implements HttpHandler {
         }
     }
 
+    // Hilfsmethode, um eine ID aus dem Pfad sicher zu parsen.
     private Integer parseId(String rawId) {
         try {
             return Integer.parseInt(rawId);

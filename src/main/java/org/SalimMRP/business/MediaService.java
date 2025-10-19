@@ -4,6 +4,7 @@ import org.SalimMRP.persistence.models.Media;
 
 import java.util.List;
 
+// Beschreibt die Fähigkeiten, die ein Media-Service bereitstellen muss (CRUD über Media-Objekte).
 public interface MediaService {
 
     boolean createMedia(Media media);

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// JDBC-Variante des MediaRepository mit den SQL-Statements für CRUD-Operationen.
 public class JdbcMediaRepository implements MediaRepository {
 
     private final ConnectionProvider connectionProvider;

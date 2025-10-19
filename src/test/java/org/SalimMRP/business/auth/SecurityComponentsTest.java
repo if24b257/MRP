@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Prüft die zentralen Sicherheitskomponenten (Hashing und Tokens) in Isolation.
 class SecurityComponentsTest {
 
     private final PasswordHasher hasher = new Sha256PasswordHasher();

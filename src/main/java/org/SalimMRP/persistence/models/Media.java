@@ -1,5 +1,6 @@
 package org.SalimMRP.persistence.models;
 
+// POJO für Media-Einträge, wird von Jackson befüllt und vom Repository gespeichert.
 public class Media {
     private int id;
     private String title;

@@ -7,12 +7,14 @@ import org.SalimMRP.persistence.models.User;
 
 import java.util.Objects;
 
+// Enthält die Geschäftslogik für Registrierung, Login und Tokenprüfung und nutzt nur die übergebenen Abstraktionen.
 public class DefaultUserService implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final TokenService tokenService;
 
+    // Abhängigkeiten werden injiziert, damit Tests und Austausch der Implementierung leicht möglich sind.
     public DefaultUserService(UserRepository userRepository,
                               PasswordHasher passwordHasher,
                               TokenService tokenService) {
@@ -23,6 +25,7 @@ public class DefaultUserService implements UserService {
 
     @Override
     public boolean register(User user) {
+        // Minimale Validierung: Es müssen Benutzername und Passwort vorhanden sein.
         if (user == null
                 || user.getUsername() == null || user.getUsername().isBlank()
                 || user.getPassword() == null || user.getPassword().isBlank()) {
@@ -34,12 +37,14 @@ public class DefaultUserService implements UserService {
             return false;
         }
 
+        // Passwörter werden nie im Klartext gespeichert.
         user.setPassword(passwordHasher.hash(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
     public String login(String username, String password) {
+        // Nur bei gültigen Kombinationen wird ein Token ausgestellt.
         if (username == null || password == null) {
             return null;
         }

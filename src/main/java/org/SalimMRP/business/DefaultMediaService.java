@@ -6,16 +6,19 @@ import org.SalimMRP.persistence.models.Media;
 import java.util.List;
 import java.util.Objects;
 
+// Verwaltet Media-Einträge und kapselt die Regeln für Speichern, Aktualisieren und Löschen.
 public class DefaultMediaService implements MediaService {
 
     private final MediaRepository mediaRepository;
 
+    // Repository wird per Konstruktor übergeben, damit Test-Doubles verwendet werden können.
     public DefaultMediaService(MediaRepository mediaRepository) {
         this.mediaRepository = Objects.requireNonNull(mediaRepository, "mediaRepository must not be null");
     }
 
     @Override
     public boolean createMedia(Media media) {
+        // Nur valide Medien werden gespeichert.
         return isValid(media) && mediaRepository.save(media);
     }
 
@@ -42,6 +45,7 @@ public class DefaultMediaService implements MediaService {
         return mediaRepository.delete(id);
     }
 
+    // Zentrale Validierung: Titel, Typ und Ersteller müssen vorhanden sein.
     private boolean isValid(Media media) {
         return media != null
                 && media.getTitle() != null && !media.getTitle().isBlank()
