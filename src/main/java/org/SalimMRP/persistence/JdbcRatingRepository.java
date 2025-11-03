@@ -1,6 +1,8 @@
 package org.SalimMRP.persistence;
 
 import org.SalimMRP.persistence.models.Rating;
+import org.SalimMRP.persistence.models.RatingSummary;
+import org.SalimMRP.persistence.models.UserRatingCount;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -177,6 +179,105 @@ public class JdbcRatingRepository implements RatingRepository {
             System.err.println("Error fetching ratings: " + e.getMessage());
         }
         return ratings;
+    }
+
+    @Override
+    public List<Rating> findByUserId(int userId) {
+        String sql = """
+                SELECT id, media_id, user_id, star_value, comment, comment_confirmed, created_at
+                  FROM ratings
+                 WHERE user_id = ?
+                 ORDER BY created_at DESC
+                """;
+        List<Rating> ratings = new ArrayList<>();
+
+        try (Connection conn = connectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Rating rating = mapRow(rs);
+                    rating.setLikedByUserIds(findLikes(rating.getId()));
+                    ratings.add(rating);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching ratings by user: " + e.getMessage());
+        }
+        return ratings;
+    }
+
+    @Override
+    public List<RatingSummary> summarizeByMediaIds(List<Integer> mediaIds) {
+        if (mediaIds == null || mediaIds.isEmpty()) {
+            return List.of();
+        }
+
+        String sql = """
+                SELECT media_id, AVG(star_value) AS avg_score, COUNT(*) AS rating_count
+                  FROM ratings
+                 WHERE media_id = ANY(?)
+                 GROUP BY media_id
+                """;
+
+        List<RatingSummary> summaries = new ArrayList<>();
+
+        try (Connection conn = connectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            var idsArray = conn.createArrayOf("int4", mediaIds.toArray(Integer[]::new));
+            stmt.setArray(1, idsArray);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    summaries.add(new RatingSummary(
+                            rs.getInt("media_id"),
+                            rs.getDouble("avg_score"),
+                            rs.getInt("rating_count")
+                    ));
+                }
+            }
+            idsArray.free();
+
+        } catch (SQLException e) {
+            System.err.println("Error summarizing ratings: " + e.getMessage());
+        }
+        return summaries;
+    }
+
+    @Override
+    public List<UserRatingCount> findRatingCountsPerUser(int limit) {
+        String sql = """
+                SELECT user_id, COUNT(*) AS rating_count
+                  FROM ratings
+                 GROUP BY user_id
+                 ORDER BY rating_count DESC, user_id ASC
+                 LIMIT ?
+                """;
+
+        List<UserRatingCount> result = new ArrayList<>();
+
+        try (Connection conn = connectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            int effectiveLimit = limit > 0 ? limit : Integer.MAX_VALUE;
+            stmt.setInt(1, effectiveLimit);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new UserRatingCount(
+                            rs.getInt("user_id"),
+                            rs.getLong("rating_count")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching rating leaderboard: " + e.getMessage());
+        }
+        return result;
     }
 
     @Override

@@ -85,4 +85,12 @@ public class DefaultUserService implements UserService {
         }
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public User findById(int id) {
+        if (id <= 0) {
+            return null;
+        }
+        return userRepository.findById(id);
+    }
 }

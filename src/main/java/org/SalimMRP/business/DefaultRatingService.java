@@ -68,6 +68,14 @@ public class DefaultRatingService implements RatingService {
     }
 
     @Override
+    public List<Rating> getRatingsByUser(int userId) {
+        if (userId <= 0) {
+            return List.of();
+        }
+        return ratingRepository.findByUserId(userId);
+    }
+
+    @Override
     public boolean updateRating(Rating rating, int userId) {
         if (rating == null || rating.getId() <= 0 || userId <= 0) {
             return false;
