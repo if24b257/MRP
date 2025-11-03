@@ -15,6 +15,8 @@ public interface RatingService {
 
     Rating getUserRatingForMedia(int mediaId, int userId);
 
+    List<Rating> getRatingsByUser(int userId);
+
     boolean updateRating(Rating rating, int userId);
 
     boolean deleteRating(int ratingId, int userId);
