@@ -1,6 +1,6 @@
 # Media Ratings Platform (MRP)
 
-Repository: https://github.com/if24b257/MRP
+Repository: https://github.com/salimsn/MRP
 
 ## Überblick
 MRP ist eine REST-API zum Verwalten von Medien (Filme, Serien, Spiele) und deren Bewertungen. Registrierte Nutzer können Medien anlegen, bearbeiten, bewerten, Kommentare moderieren, Likes vergeben, Favoriten pflegen, Empfehlungen abrufen sowie Profil- und Leaderboard-Auswertungen einsehen. Die Anwendung läuft als schlanker Java-Server ohne schweres Webframework.
