@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS media (
     title TEXT NOT NULL,
     description TEXT,
     media_type TEXT NOT NULL,
+    release_year INT,
+    age_restriction TEXT,
+    genres TEXT[] DEFAULT '{}'::TEXT[],
     created_at TIMESTAMP DEFAULT now()
 );
 
@@ -31,4 +34,11 @@ CREATE TABLE IF NOT EXISTS rating_likes (
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     liked_at TIMESTAMP DEFAULT now(),
     PRIMARY KEY (rating_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS favorites (
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    media_id INT NOT NULL REFERENCES media(id) ON DELETE CASCADE,
+    marked_at TIMESTAMP DEFAULT now(),
+    PRIMARY KEY (user_id, media_id)
 );
