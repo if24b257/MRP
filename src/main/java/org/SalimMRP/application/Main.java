@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpServer;
 import org.SalimMRP.business.DefaultMediaService;
+import org.SalimMRP.business.DefaultProfileService;
 import org.SalimMRP.business.DefaultRatingService;
 import org.SalimMRP.business.DefaultUserService;
 import org.SalimMRP.business.MediaService;
+import org.SalimMRP.business.ProfileService;
 import org.SalimMRP.business.RatingService;
 import org.SalimMRP.business.UserService;
 import org.SalimMRP.business.auth.InMemoryTokenService;
@@ -16,11 +18,13 @@ import org.SalimMRP.business.auth.Sha256PasswordHasher;
 import org.SalimMRP.business.auth.TokenService;
 import org.SalimMRP.persistence.ConnectionProvider;
 import org.SalimMRP.persistence.Database;
+import org.SalimMRP.persistence.FavoriteRepository;
 import org.SalimMRP.persistence.JdbcMediaRepository;
 import org.SalimMRP.persistence.JdbcRatingRepository;
 import org.SalimMRP.persistence.JdbcUserRepository;
 import org.SalimMRP.persistence.MediaRepository;
 import org.SalimMRP.persistence.RatingRepository;
+import org.SalimMRP.persistence.JdbcFavoriteRepository;
 import org.SalimMRP.persistence.UserRepository;
 import org.SalimMRP.presentation.MediaController;
 import org.SalimMRP.presentation.RatingController;
@@ -47,20 +51,22 @@ public class Main {
             UserRepository userRepository = new JdbcUserRepository(connectionProvider);
             MediaRepository mediaRepository = new JdbcMediaRepository(connectionProvider);
             RatingRepository ratingRepository = new JdbcRatingRepository(connectionProvider);
+            FavoriteRepository favoriteRepository = new JdbcFavoriteRepository(connectionProvider);
 
             PasswordHasher passwordHasher = new Sha256PasswordHasher();
             TokenService tokenService = new InMemoryTokenService();
 
             UserService userService = new DefaultUserService(userRepository, passwordHasher, tokenService);
-            MediaService mediaService = new DefaultMediaService(mediaRepository);
+            MediaService mediaService = new DefaultMediaService(mediaRepository, ratingRepository, favoriteRepository);
             RatingService ratingService = new DefaultRatingService(ratingRepository, mediaRepository);
+            ProfileService profileService = new DefaultProfileService(userRepository, ratingRepository, favoriteRepository, mediaService);
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
             // Controller registrieren ihre Endpunkte beim Server.
-            UserController userController = new UserController(userService, mapper);
+            UserController userController = new UserController(userService, profileService, mediaService, mapper);
             userController.registerRoutes(server);
 
             MediaController mediaController = new MediaController(mediaService, userService, mapper);
