@@ -8,4 +8,6 @@ public interface UserRepository {
     boolean save(User user);
 
     User findByUsername(String username);
+
+    User findById(int id);
 }

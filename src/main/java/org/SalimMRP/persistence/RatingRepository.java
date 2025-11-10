@@ -1,6 +1,8 @@
 package org.SalimMRP.persistence;
 
 import org.SalimMRP.persistence.models.Rating;
+import org.SalimMRP.persistence.models.RatingSummary;
+import org.SalimMRP.persistence.models.UserRatingCount;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +21,12 @@ public interface RatingRepository {
     Rating findByMediaIdAndUserId(int mediaId, int userId);
 
     List<Rating> findByMediaId(int mediaId);
+
+    List<Rating> findByUserId(int userId);
+
+    List<RatingSummary> summarizeByMediaIds(List<Integer> mediaIds);
+
+    List<UserRatingCount> findRatingCountsPerUser(int limit);
 
     boolean confirmComment(int ratingId);
 
